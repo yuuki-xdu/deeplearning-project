@@ -18,19 +18,20 @@ y = data.iloc[:, -1].values         # 最后一列(标签)
 # 将标签进行独热编码（one-hot encoding）
 y = to_categorical(y, num_classes=5)
 
-
+#
 scaler = StandardScaler()
 # 划分训练集和测试集
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
+
+
+'''
+模型创建与编译
+'''
+learning_rate=0.00025
 # 使用Adam优化器并设置学习率为0.001
-optimizer = Adam(learning_rate=0.00025)
-
-'''
-模型创建
-'''
-
+optimizer = Adam(learning_rate)
 # 创建Keras模型
 model = Sequential()
 model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
@@ -42,6 +43,13 @@ model.compile(optimizer=optimizer,
               loss='categorical_crossentropy', 
               metrics=['accuracy'])
 # 在每个 epoch 结束时保存模型
+
+
+'''
+训练模型
+'''
+
+
 checkpoint = ModelCheckpoint('my_model.keras', save_best_only=True)
 plot_model(model, to_file='model_structure.png', show_shapes=True, show_layer_names=True) 
 # 在训练过程中监测验证集上的性能，如果性能不再提升则提前停止训练
@@ -51,11 +59,11 @@ model.fit(X_train_scaled,
           y_train, 
           epochs=100, 
           batch_size=16, 
-          validation_data=(X_test, y_test),
+          validation_data=(X_test_scaled, y_test),
           callbacks=[checkpoint, early_stopping])
 
 # 评估模型
-loss, accuracy = model.evaluate(X_test, y_test)
+loss, accuracy = model.evaluate(X_test_scaled, y_test)
 print(f"Test accuracy: {accuracy}")
 
 
