@@ -51,7 +51,8 @@ model.compile(optimizer=optimizer,
 
 
 checkpoint = ModelCheckpoint('my_model.keras', save_best_only=True)
-plot_model(model, to_file='model_structure.png', show_shapes=True, show_layer_names=True) 
+#绘制模型示意图
+#plot_model(model, to_file='model_structure.png', show_shapes=True, show_layer_names=True) 
 # 在训练过程中监测验证集上的性能，如果性能不再提升则提前停止训练
 early_stopping = EarlyStopping(patience=15)
 # 训练模型
