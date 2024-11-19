@@ -7,6 +7,7 @@ from keras.api.utils import to_categorical,plot_model
 from keras.api.callbacks import ModelCheckpoint, EarlyStopping,LearningRateScheduler
 from keras.api.optimizers import Adam
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt 
 '''
 读取数据并处理
 '''
@@ -56,7 +57,7 @@ checkpoint = ModelCheckpoint('my_model.keras', save_best_only=True)
 # 在训练过程中监测验证集上的性能，如果性能不再提升则提前停止训练
 early_stopping = EarlyStopping(patience=15)
 # 训练模型
-model.fit(X_train_scaled, 
+history=model.fit(X_train_scaled, 
           y_train, 
           epochs=100, 
           batch_size=16, 
@@ -66,5 +67,27 @@ model.fit(X_train_scaled,
 # 评估模型
 loss, accuracy = model.evaluate(X_test_scaled, y_test)
 print(f"Test accuracy: {accuracy}")
+
+# 绘制训练和验证损失
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.title('Training and Validation Loss')
+plt.legend()
+
+# 绘制训练和验证准确率
+plt.subplot(1, 2, 2)
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
 
 
